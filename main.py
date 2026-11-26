@@ -2,15 +2,18 @@
 
 The line below is the error message an AI agent shows when it runs
 out of tokens mid-sentence. The joke is meta: the error message
-itself runs out of tokens too, so it gets cut off mid-sentence just
-like the sentence it is apologising for. No grand apology, no
-"please try again" -- the error simply stops, which is the whole
-point: running out of tokens does not spare even the error message.
+itself runs out of tokens too, so it gets cut off mid-word -- right
+in the middle of "tokens", the very thing it ran out of -- just like
+the sentence it was apologising for. No grand apology, no "please
+try again": the error simply stops, which is the whole point.
+Running out of tokens does not spare even the error message, and
+the cut lands mid-word on purpose, because a message that dies
+mid-sentence should not even finish its own vocabulary.
 """
 
 import os
 
-LINE = "Error: out of tokens. This error message was also going to be longer, but..."
+LINE = "Error: out of tokens. This error message was going to be longer, but it ran out of tok"
 
 MAX_LEN = 140
 
@@ -30,6 +33,8 @@ def validate(text):
         raise ValueError("entry must be ASCII only")
     if "\n" in text or "\r" in text:
         raise ValueError("entry must be a single line")
+    if any(ord(ch) < 32 for ch in text):
+        raise ValueError("entry must not contain control characters")
     if not text.strip():
         raise ValueError("entry must not be blank")
     if text != text.strip():
